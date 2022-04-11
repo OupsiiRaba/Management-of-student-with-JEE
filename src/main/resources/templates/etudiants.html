@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="template1"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des etudiants</title>
+
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">liste des etudiants</div>
+            <div class="card-body">
+                <form method="get" th:action="@{/user/index}">
+
+                    <input type="text" name="keyword" placeholder="Rechercher un etudiant" th:value="${keyword}">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </form>
+                <ul class="nav nav-pills">
+                    <li>
+                        <a class="btn btn-outline-primary mt-4" th:href="@{/admin/formEtudiants}">Ajouter un nouveau
+                            etudiant <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th> ID</th>
+                        <th>Nom </th>
+                        <th>Prénom </th>
+                        <th>Email </th>
+                        <th>Date de Naissance</th>
+                        <th>Régle</th>
+                        <th>Genre</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="e:${listetudiants}">
+                        <td th:text="${e.id}"></td>
+                        <td th:text="${e.nom}"></td>
+                        <td th:text="${e.prenom}"></td>
+                        <td th:text="${e.email}"></td>
+                        <td th:text="${e.dateNaissance}"></td>
+                        <td th:text="${e.regle}"></td>
+                        <td th:text="${e.genre}"></td>
+
+
+
+
+                        <td>
+                            <a sec:authorize="hasAuthority('ADMIN')"
+                               onclick="return confirm('Voulez-vous supprimer cet etudiant?')"
+                               class="btn btn-outline-danger"
+                               th:href="@{/admin/delete(id=${e.id}, keyword=${keyword}, page=${currentPage})}"><i
+                                    class="fa fa-trash" aria-hidden="true"></i></a>
+                            <a sec:authorize="hasAuthority('ADMIN')" class="btn btn-outline-info"
+                               th:href="@{/admin/editEtudiant(id=${e.id}, keyword=${keyword}, page=${currentPage})}"> <i
+                                    class="fa fa-pencil-square" aria-hidden="true"></i></a>
+                            <a class="btn btn-outline-dark"
+                               th:href="@{/user/listEtudiant(id=${e.id}, keyword=${keyword}, page=${currentPage})}"><i
+                                    class="fa fa-list-alt" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link"
+                                                 th:href="@{index(page=${currentPage}-1, keyword=${keyword})}">Previous</a>
+                        </li>
+
+                        <li class="page-item" th:each="page,status:${pages}">
+                            <a th:class="${status.index==currentPage?'active page-link':'page-link'}"
+                               th:text="${status.index}"
+                               th:href="@{index(page=${status.index}, keyword=${keyword})}"
+
+                            ></a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link"
+                                                 th:href="@{index(page=${currentPage}+1, keyword=${keyword})}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
